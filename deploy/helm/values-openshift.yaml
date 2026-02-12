@@ -1,0 +1,66 @@
+# OpenShift-specific value overrides for AIVA deployment
+# Used with deploy-openshift.sh
+#
+# Adds emptyDir volumes for stateful services.
+# GPU tolerations are set via --set in deploy-openshift.sh (configurable).
+# For production, replace emptyDir with PersistentVolumeClaims.
+
+# Storage volumes
+etcd:
+  extraPodVolumes:
+  - name: data-volume
+    emptyDir: {}
+  extraPodVolumeMounts:
+  - name: data-volume
+    mountPath: /etcd
+
+minio:
+  extraPodVolumes:
+  - name: data-volume
+    emptyDir: {}
+  extraPodVolumeMounts:
+  - name: data-volume
+    mountPath: /minio_data
+
+postgres:
+  extraPodVolumes:
+  - name: data-volume
+    emptyDir: {}
+  extraPodVolumeMounts:
+  - name: data-volume
+    mountPath: /var/lib/postgresql
+
+cache-services:
+  extraPodVolumes:
+  - name: data-volume
+    emptyDir: {}
+  extraPodVolumeMounts:
+  - name: data-volume
+    mountPath: /data
+
+ingest-client:
+  extraPodVolumes:
+  - name: data-volume
+    emptyDir: {}
+  extraPodVolumeMounts:
+  - name: data-volume
+    mountPath: /opt/data/product
+
+# Writable HF cache for embedding NIM (OpenShift random UID can't write to /.cache)
+nemollm-embedding:
+  extraPodVolumes:
+  - name: hf-cache
+    emptyDir: {}
+  extraPodVolumeMounts:
+  - name: hf-cache
+    mountPath: /.cache
+
+# Storage (tolerations set via --set in deploy-openshift.sh)
+milvus:
+  extraPodVolumes:
+  - name: data-volume
+    emptyDir: {}
+  extraPodVolumeMounts:
+  - name: data-volume
+    mountPath: /var/lib/milvus
+
